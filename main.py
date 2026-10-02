@@ -1,10 +1,35 @@
 from dotenv import load_dotenv
-import os
+from langchain_core.prompts import PromptTemplate
+from langchain_openai import ChatOpenAI
+
 load_dotenv()
 
 def main():
-    print("Hello from langchain-course!")
-    print(os.environ.get("OPENAI_API_KEY"))
+    information = """
+        Saturn is the sixth planet from the Sun, and is the second largest planet in the Solar System, after Jupiter. It is a gas giant, with an average radius of about 9 times that of Earth. It has an eighth of the average density of Earth, but is over 95 times more massive. Even though Saturn is almost as big as Jupiter, it has less than a third of its mass. Saturn orbits the Sun at a distance of 9.59 AU (1,434 million km), with an orbital period of 29.45 years.
+
+        Saturn's interior is thought to be composed of a rocky core, surrounded by a deep layer of metallic hydrogen, an intermediate layer of liquid hydrogen and liquid helium, and an outer layer of gas. Saturn has a pale yellow hue, due to ammonia crystals in its upper atmosphere. An electrical current in the metallic hydrogen layer is thought to give rise to Saturn's planetary magnetic field, which is weaker than Earth's, but has a magnetic moment 580 times that of Earth because of Saturn's greater size. Saturn's magnetic field strength is about a twentieth that of Jupiter.[27] The outer atmosphere is generally bland and lacking in contrast, although long-lived features can appear. Wind speeds on Saturn can reach 1,800 kilometers per hour (1,100 miles per hour).
+
+        The planet has a bright and extensive system of rings, composed mainly of ice particles, with a smaller amount of rocky debris and dust. At least 293 moons orbit the planet, of which 63 are officially named; these do not include the hundreds of moonlets in the rings. Titan, Saturn's largest moon and the second largest in the Solar System, is larger (but less massive) than the planet Mercury and is the only moon in the Solar System that has a substantial atmosphere.[28]
+    """
+
+    summary_template = """
+    Given the information '{information}', provide:
+    1. A short summary.
+    2. Two interesting facts.
+    """
+
+    summary_prompt_template = PromptTemplate(
+        input_variables=["information"],
+        template=summary_template
+    )
+
+    llm = ChatOpenAI(model_name="gpt-6-luna")
+
+    chain = summary_prompt_template | llm
+    response = chain.invoke(input={"information": information})
+
+    print(response.content)
 
 if __name__ == "__main__":
     main()
