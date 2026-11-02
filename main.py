@@ -6,6 +6,7 @@ from langchain.agents import create_agent
 from langchain.tools import tool
 from langchain_core.messages import HumanMessage
 from langchain_openai import ChatOpenAI
+# DIY tool
 from tavily import TavilyClient
 
 tavily = TavilyClient()
@@ -22,8 +23,12 @@ def search(query: str) -> str:
     print (f"Searching for {query}")
     return tavily.search(query=query)
 
+# or use langchain-tavily integration
+from langchain_tavily import TavilySearch
+
+
 llm = ChatOpenAI(model_name="gpt-6-luna")
-tools = [search]
+tools = [TavilySearch()]  #[search]
 agent = create_agent(model=llm, tools=tools)
 
 
