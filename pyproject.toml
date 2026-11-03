@@ -6,10 +6,13 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "black>=25.1.0",
+    "docling-slim[format-markdown]>=2.146.0",
     "isort>=6.0.1",
     "langchain>=0.3.27",
+    "langchain-docling>=3.0.0",
     "langchain-openai>=0.3.31",
     "langchain-pinecone>=0.2.11",
+    "langchain-text-splitters>=1.1.3",
     "langchain-unstructured>=1.0.1",
     "langchainhub>=0.1.21",
     "python-dotenv>=1.1.1",
