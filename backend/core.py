@@ -71,7 +71,7 @@ def run_llm(query: str) -> Dict[str, Any]:
     response = agent.invoke({"messages": messages})
     
     # Extract the answer from the last AI message
-    answer = response["messages"][-1].content
+    answer = response["messages"][-1].text
     
     # Extract context documents from ToolMessage artifacts
     context_docs = []
