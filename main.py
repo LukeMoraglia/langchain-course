@@ -11,7 +11,7 @@ load_dotenv()
 print("Initializing components...")
 
 embeddings = OpenAIEmbeddings()
-llm = ChatOpenAI()
+llm = ChatOpenAI(model='gpt-6-luna')
 vectorstore = PineconeVectorStore(
     index_name=os.environ['INDEX_NAME'], embedding=embeddings
 )
@@ -25,10 +25,42 @@ prompt_template = ChatPromptTemplate.from_template(
 
     Question: {question}
 
-    Provide a detailed answer:
+    Provide a detailed answer with direct quotes from the context to ground your answer:
 """
 )
 
 def format_docs(docs):
     """Format retrieved documents into a single string."""
     return "\n\n".join(doc.page_content for doc in docs)
+
+def retrieval_chain_without_lcel(query: str):
+    """
+    Simple retrieval without LCEL, with limitations
+    """
+
+    # retrieve relevant docs from vector store
+    docs = retriever.invoke(query)
+    print(f"Retrieved {len(docs)} documents")
+    context = format_docs(docs)
+
+    messages = prompt_template.format_messages(context=context, question=query)
+
+    response = llm.invoke(messages)
+
+    return response.content
+
+if __name__ == '__main__':
+    print("Retrieving...")
+
+    query = "what is Pinecone in machine learning?"
+    print(f"Query: {query}")
+
+    # Raw invocation without RAG
+    print("Raw invocation without RAG:")
+    result_raw = llm.invoke([HumanMessage(content=query)])
+    print(result_raw.content)
+
+    print("\n\n" + "=" * 70)  # Separator for clarity
+    print("Implementation without LCEL:")
+    result_without_lcel = retrieval_chain_without_lcel(query)
+    print(result_without_lcel)
